@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calcolatore netto Vinted, eBay e Subito</title>
+<meta name="description" content="Calcola quanto ti resta dalla vendita online: inserisci prezzo, spedizione e commissioni personalizzate per Vinted, eBay o Subito.">
+<meta name="robots" content="index,follow">
+<style>
+:root{--bg:#0f172a;--card:#111827;--line:#1f2937;--txt:#e5e7eb;--muted:#9ca3af;--green:#22c55e;--blue:#3b82f6}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+.wrap{max-width:760px;margin:auto;padding:20px}h1{font-size:1.6rem;margin:.2rem 0 .4rem}
+.sub{color:var(--muted);margin:0 0 18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+label{display:block;font-size:.9rem;color:var(--muted);margin:12px 0 6px}
+input,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:var(--txt);font-size:1rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{width:100%;margin-top:16px;padding:14px;border:0;border-radius:12px;background:var(--blue);color:#fff;font-weight:700;font-size:1rem;cursor:pointer}
+.result{font-size:2rem;font-weight:800;color:var(--green);margin:6px 0}
+table{width:100%;border-collapse:collapse;margin-top:10px}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;font-size:.95rem}
+td:last-child,th:last-child{text-align:right}.note{font-size:.8rem;color:var(--muted);margin-top:10px}
+.ad{min-height:90px;border:1px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;margin:18px 0}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:20px 0}footer a{color:#9ca3af}
+</style></head><body><div class="wrap">
+<h1>Calcolatore netto vendite online</h1>
+<p class="sub">Inserisci prezzo, spedizione e commissioni: scopri subito quanto ti resta davvero.</p>
+<div class="card">
+<label>Piattaforma</label>
+<select id="platform">
+<option value="custom">Personalizzata</option>
+<option value="vinted">Vinted</option>
+<option value="ebay">eBay Italia</option>
+<option value="subito">Subito.it</option>
+</select>
+<div class="grid">
+<div><label>Prezzo di vendita (€)</label><input id="price" type="number" min="0" step="0.01" value="50"></div>
+<div><label>Spedizione a tuo carico (€)</label><input id="ship" type="number" min="0" step="0.01" value="0"></div>
+<div><label>Commissione fissa (€)</label><input id="feeFixed" type="number" min="0" step="0.01" value="0"></div>
+<div><label>Commissione percentuale (%)</label><input id="feePct" type="number" min="0" step="0.01" value="0"></div>
+</div>
+<p class="note">Le commissioni sono modificabili. Se la piattaforma non ne applica, lascia entrambe a 0.</p>
+<button onclick="calc()">Calcola guadagno netto</button>
+<div id="out" style="display:none"><div class="result" id="net"></div>
+<table><tr><th>Voce</th><th>Importo</th></tr>
+<tr><td>Prezzo di vendita</td><td id="rPrice"></td></tr>
+<tr><td>Commissioni</td><td id="rFee"></td></tr>
+<tr><td>Spedizione</td><td id="rShip"></td></tr>
+<tr><td><strong>Ti resta</strong></td><td id="rNet"></td></tr></table></div></div>
+<div class="ad"><span>Spazio banner AdSense</span></div>
+<footer><p><a href="privacy.html">Privacy</a> · <a href="cookie.html">Cookie</a> · <a href="chi-siamo.html">Chi siamo</a></p></footer></div>
+<script>
+const presets={vinted:[0,0],ebay:[0.35,12],subito:[0,5],custom:[0,0]};
+function calc(){
+const price=+document.getElementById("price").value||0;
+const ship=+document.getElementById("ship").value||0;
+const fixed=+document.getElementById("feeFixed").value||0;
+const pct=+document.getElementById("feePct").value||0;
+const fee=Math.max(0,price*pct/100+fixed);
+const net=price-fee-ship;
+const f=n=>n.toFixed(2).replace(".",",")+" €";
+document.getElementById("out").style.display="block";
+document.getElementById("net").textContent=f(net)+" netti";
+document.getElementById("rPrice").textContent=f(price);
+document.getElementById("rFee").textContent="-"+f(fee);
+document.getElementById("rShip").textContent="-"+f(ship);
+document.getElementById("rNet").textContent=f(net);}
+function preset(){
+const v=presets[document.getElementById("platform").value];
+document.getElementById("feeFixed").value=v[0];
+document.getElementById("feePct").value=v[1];
+calc();}
+document.getElementById("platform").addEventListener("change",preset);
+["price","ship","feeFixed","feePct"].forEach(id=>document.getElementById(id).addEventListener("input",calc));
+calc();
+</script></body></html>
